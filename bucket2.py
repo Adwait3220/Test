@@ -20,7 +20,7 @@ def GenerateConfig(context):
 
   resources = [{
       'name': 'a-cludnuro-bucket-v2',
-      'type': 'compute.v1.firewall',
+      'type': 'gcp-types/storage-v1:buckets',
       'properties': {
           'location': 'us-east-1',
           'versioning': [{

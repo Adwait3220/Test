@@ -13,10 +13,11 @@
 # limitations under the License.
 
 imports:
-- path: bucket1.py
-- path: bucket2.py
-- path: Iam-Role.py
+  - path: bucket1.py
+  - path: bucket2.py
+  - path: main.py
 
 resources:
-- name: Storage-Bucket
-  type: main.py
+  - name: storage-bucket
+    type: main.py
+  
