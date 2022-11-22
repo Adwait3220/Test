@@ -22,7 +22,7 @@ def GenerateConfig(context):
       'name': 'Storage-Bucket-1',
       'type': 'bucket1.py'
   }, {
-      'name': 'Storage-Bucket-1',
+      'name': 'Storage-Bucket-2',
       'type': 'bucket2.py'
   }]
   return {'resources': resources}

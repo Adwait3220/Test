@@ -1,0 +1,81 @@
+imports:
+  - path: lb.py
+  # - path: template.yaml
+  
+resources:
+  - name: http-instance-group-manager
+    type: lb.py
+    properties:
+      instanceTemplate: $(ref.http-instance-template.selfLink)
+      namedPorts:
+      - name: http
+        port: 80
+      targetSize: 2
+      region: us-east1
+  
+  - name: http-instance-template
+    type: compute.v1.instanceTemplate
+    properties:
+      properties:
+        disks:
+        - autoDelete: true
+          boot: true
+          deviceName: boot
+          initializeParams:
+            sourceImage: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
+          type: PERSISTENT
+        machineType: f1-micro
+        metadata:
+          items:
+          - key: startup-script
+            value: |
+              sudo apt-get update
+              sudo apt-get install apache2 -y
+              sudo service apache2 restart
+              echo "host:`hostname`" | sudo tee /var/www/html/index.html
+        networkInterfaces:
+          - accessConfigs:
+              - name: External NAT
+                type: ONE_TO_ONE_NAT
+            network: global/networks/default
+
+  - name: http-backend-service
+    type: compute.v1.backendService
+    properties:
+      backends:
+        - group: $(ref.http-instance-group-manager.instanceGroup)
+      healthChecks:
+        - $(ref.http-health-check.selfLink)
+      loadBalancingScheme: EXTERNAL
+      portName: http
+      protocol: HTTP
+  
+  - name: http-health-check
+    type: compute.v1.httpHealthCheck
+    
+  - name: allow-http-healthcheck 
+    type: compute.v1.firewall
+    properties:
+      sourceRanges:
+        - 35.191.0.0/16
+        - 130.211.0.0/22
+      allowed:
+        - IPProtocol: http
+          ports:
+            - 80
+
+  - name: elb-target-https-proxy
+    type: compute.v1.targetHttpsProxy
+    properties:
+      urlMap: $(ref.http-url-map.selfLink)
+  
+  - name: elb-https-forwarding-rule
+    type: compute.v1.globalForwardingRule
+    properties:
+      IPAddress: $(ref.elb-static-ip.selfLink)
+      IPProtocol: HTTP
+      loadBalancingScheme: EXTERNAL
+      portRange: 80
+      target: $(ref.elb-target-https-proxy.selfLink)
+  - name: elb-static-ip
+    type: compute.v1.globalAddress
