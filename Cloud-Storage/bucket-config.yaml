@@ -1,11 +1,11 @@
 
 imports:
-  - path: storage_bucket.py
-    name: gcs_bucket.py
+  - path: storage-bucket.py
+    name: storage-bucket.py
 
 resources:
   - name: test-bucket-cloudnuro
-    type: gcs_bucket.py
+    type: storage-bucket.py
     properties:
       name: test-bucket-cloudnuro
       location: us-east1
@@ -25,8 +25,8 @@ resources:
                 - STANDARD
                 - COLDLINE
               numNewerVersions: 2
-      bindings:
-        - role: roles/storage.objectAdmin
-          members:
-            - user: Adwaitp97@gmail.com
-            - serviceAccount: storage@weighty-volt-365813.iam.gserviceaccount.com
+      # bindings:
+      #   - role: roles/storage.objectAdmin
+      #     members:
+      #       - user: Adwaitp97@gmail.com
+      #       - serviceAccount: storage@weighty-volt-365813.iam.gserviceaccount.com

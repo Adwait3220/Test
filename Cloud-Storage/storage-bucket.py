@@ -10,7 +10,7 @@ def generate_config(context):
     project_id = properties.get('project', context.env['project'])
     bucket_name = properties.get('name', context.env['name'])
 
-    # output variables
+
     bucket_selflink = '$(ref.{}.selfLink)'.format(context.env['name'])
     bucket_uri = 'gs://' + bucket_name + '/'
 
@@ -60,7 +60,7 @@ def generate_config(context):
 
     resources.append(bucket)
 
-    # If IAM policy bindings are defined, apply these bindings.
+
     storage_provider_type = 'gcp-types/storage-v1:virtual.buckets.iamMemberBinding'
     bindings = properties.get('bindings', [])
 
@@ -79,7 +79,7 @@ def generate_config(context):
                 policy_name = '{}-iampolicy'.format(policy_get_name)
                 iam_policy_resource = {
                     'name': policy_name,
-                    # TODO - Virtual type documentation needed
+
                     'type': (storage_provider_type),
                     'properties':
                         {
