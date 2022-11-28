@@ -20,4 +20,4 @@ imports:
 resources:
   - name: storage-bucket
     type: main.py
-  s
+  
