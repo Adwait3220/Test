@@ -1,6 +1,7 @@
 
-from hashlib import sha1
+""" This template creates a Google Cloud Storage bucket. """
 
+from hashlib import sha1
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
@@ -9,8 +10,9 @@ def generate_config(context):
     properties = context.properties
     project_id = properties.get('project', context.env['project'])
     bucket_name = properties.get('name', context.env['name'])
+    Environment= properties.get('Environment', context.env['name'])
 
-
+    # output variables
     bucket_selflink = '$(ref.{}.selfLink)'.format(context.env['name'])
     bucket_uri = 'gs://' + bucket_name + '/'
 
@@ -20,7 +22,8 @@ def generate_config(context):
         'type': 'gcp-types/storage-v1:buckets',
         'properties': {
             'project': project_id,
-            'name': bucket_name
+            'name': '-'.join([context.env[bucket_name],context.properties[Environment]]),
+            'Environment':'$(ref.' + context.properties['Environment']
         }
     }
 
@@ -46,6 +49,7 @@ def generate_config(context):
         'lifecycle',
         'labels',
         'website'
+        'Environment'
     ]
 
     for prop in optional_props:
@@ -60,7 +64,7 @@ def generate_config(context):
 
     resources.append(bucket)
 
-
+    # If IAM policy bindings are defined, apply these bindings.
     storage_provider_type = 'gcp-types/storage-v1:virtual.buckets.iamMemberBinding'
     bindings = properties.get('bindings', [])
 
@@ -79,7 +83,7 @@ def generate_config(context):
                 policy_name = '{}-iampolicy'.format(policy_get_name)
                 iam_policy_resource = {
                     'name': policy_name,
-
+                    # TODO - Virtual type documentation needed
                     'type': (storage_provider_type),
                     'properties':
                         {
