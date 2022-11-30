@@ -1,32 +1,17 @@
 
 imports:
-  - path: storage-bucket.py
-    name: storage-bucket.py
+  - path: ./gcs_bucket.py
+    name: gcs_bucket.py
+    
 
 resources:
-  - name: test-bucket-cloudnuro
-    type: storage-bucket.py
+  - name: cn-automte
+    type: gcs_bucket.py
     properties:
-      name: test-bucket-cloudnuro
+      name: cn-automte
+      Environment: dev
       location: us-east1
       versioning:
-        enabled: True
-      lifecycle:
-        rule:
-          - action:
-              type: SetStorageClass
-              storageClass: NEARLINE
-            condition:
-              age: 36500
-              createdBefore: "2022-11-23"
-              isLive: false
-              matchesStorageClass:
-                - REGIONAL
-                - STANDARD
-                - COLDLINE
-              numNewerVersions: 2
-      # bindings:
-      #   - role: roles/storage.objectAdmin
-      #     members:
-      #       - user: Adwaitp97@gmail.com
-      #       - serviceAccount: storage@weighty-volt-365813.iam.gserviceaccount.com
+        enabled: False
+    
+
